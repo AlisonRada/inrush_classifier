@@ -41,35 +41,43 @@ if st.sidebar.button("Clear Cache"):
 
 
 if len(uploaded_files) == 2:
-    # if ['.cfg' in a or '.CFG' in a for a in uploaded_files] == [] or \
-    # ['.dat' in a or '.DAT' in a for a in uploaded_files] == []:
     comtrade_reader = Comtrade()
-    cfg_file = [file for file in uploaded_files if '.CFG' in file.name or '.cfg' in file.name][0]
-    dat_file = [file for file in uploaded_files if '.DAT' in file.name or '.dat' in file.name][0]
+    input_errors = []
+    try:
+        cfg_file = next(file for file in uploaded_files if file.name.upper().endswith(".CFG"))
+    except StopIteration:
+        input_errors.append("Debes seleccionar un archivo CFG")
+    try:
+        dat_file = next(file for file in uploaded_files if file.name.upper().endswith(".DAT"))
+    except StopIteration:
+        input_errors.append("Debes seleccionar un archivo DAT")
 
-    cfg_content = io.TextIOWrapper(cfg_file)
-    dat_content = io.TextIOWrapper(dat_file)
-    
-    comtrade_reader.read(cfg_content, dat_content)
+    if not input_errors:
+        cfg_content = io.TextIOWrapper(cfg_file)
+        dat_content = io.TextIOWrapper(dat_file)
+        
+        comtrade_reader.read(cfg_content, dat_content)
 
-    df = clean_entry(comtrade_reader, first_signal, 'FILE_1')
-            
-    result = results['normal']
-    st.markdown(f"<h3>Clasificación: {result}</h3>", unsafe_allow_html=True)
+        df = clean_entry(comtrade_reader, first_signal, 'FILE_1')
+                
+        result = results['normal']
+        st.markdown(f"<h3>Clasificación: {result}</h3>", unsafe_allow_html=True)
 
-    fig = px.line(df, x='Time', y='Value', color='Channel')
-    fig.update_layout(template='simple_white',
-                      legend_title='Señales',
-                      xaxis_title='Tiempo (m/s)',
-                      yaxis_title='Voltaje (A)',
-                      title='Señales',
-                      hovermode="x"
-                      )
-    st.plotly_chart(fig)
+        fig = px.line(df, x='Time', y='Value', color='Channel')
+        fig.update_layout(template='simple_white',
+                        legend_title='Señales',
+                        xaxis_title='Tiempo (m/s)',
+                        yaxis_title='Voltaje (A)',
+                        title='Señales',
+                        hovermode="x"
+                        )
+        st.plotly_chart(fig)
 
-    st.markdown("<h3>Estadísticos</h3>", unsafe_allow_html=True)
+        st.markdown("<h3>Estadísticos</h3>", unsafe_allow_html=True)
 
-    st.write(df.groupby('Channel').Value.describe())
+        st.write(df.groupby('Channel').Value.describe())
+    else:
+        st.error("\n".join(input_errors))
 else:
     fig = px.line({})
     st.plotly_chart(fig)
