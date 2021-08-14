@@ -8,32 +8,35 @@ from comtrade import Comtrade
 
 from cleaner import read_comtrade, clean_entry
 
-ICON_URL = 'energy.png'
-title = 'Detección de Inrush'
-results = {
-    'error': '🔴',
-    'normal': '🟢'
-}
+ICON_URL = "energy.png"
+title = "Detección de Inrush"
+results = {"error": "🔴", "normal": "🟢"}
 
 st.set_page_config(
-    page_title=title, page_icon=ICON_URL,
+    page_title=title,
+    page_icon=ICON_URL,
 )
 
 # Display header.
-#st.markdown(f"<h1>{title}</h1>", unsafe_allow_html=True)
+# st.markdown(f"<h1>{title}</h1>", unsafe_allow_html=True)
 f"""
 # {title}
 ### **Nota**: Los archivos deben tener encoding UTF-8 para que el clasificador pueda dar resultados.
 """
 
-with st.sidebar.subheader('Subir archivos'):
-    uploaded_files = st.sidebar.file_uploader("Por favor, subir los archivos COMTRADE: cfg, dat", \
-    type=["cfg", "dat"], accept_multiple_files=True)
+with st.sidebar.subheader("Subir archivos"):
+    uploaded_files = st.sidebar.file_uploader(
+        "Por favor, subir los archivos COMTRADE: cfg, dat",
+        type=["cfg", "dat"],
+        accept_multiple_files=True,
+    )
 st.sidebar.subheader("Señales de interés")
-first_signal = st.sidebar.number_input('Señal A', min_value=1, value=1, step=1)
-#print(f"{signal_a}, {signal_b}, {signal_c}")
+first_signal = st.sidebar.number_input("Señal A", min_value=1, value=1, step=1)
+# print(f"{signal_a}, {signal_b}, {signal_c}")
 st.sidebar.subheader("")
-st.sidebar.write("&nbsp[![See source](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://github.com/AlisonRada/inrush_classifier)")
+st.sidebar.write(
+    "&nbsp[![See source](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://github.com/AlisonRada/inrush_classifier)"
+)
 st.sidebar.subheader("")
 if st.sidebar.button("Clear Cache"):
     st.caching.clear_cache()
@@ -44,38 +47,43 @@ if len(uploaded_files) == 2:
     comtrade_reader = Comtrade()
     input_errors = []
     try:
-        cfg_file = next(file for file in uploaded_files if file.name.upper().endswith(".CFG"))
+        cfg_file = next(
+            file for file in uploaded_files if file.name.upper().endswith(".CFG")
+        )
     except StopIteration:
         input_errors.append("Debes seleccionar un archivo CFG")
     try:
-        dat_file = next(file for file in uploaded_files if file.name.upper().endswith(".DAT"))
+        dat_file = next(
+            file for file in uploaded_files if file.name.upper().endswith(".DAT")
+        )
     except StopIteration:
         input_errors.append("Debes seleccionar un archivo DAT")
 
     if not input_errors:
         cfg_content = io.TextIOWrapper(cfg_file)
         dat_content = io.TextIOWrapper(dat_file)
-        
+
         comtrade_reader.read(cfg_content, dat_content)
 
-        df = clean_entry(comtrade_reader, first_signal, 'FILE_1')
-                
-        result = results['normal']
+        df = clean_entry(comtrade_reader, first_signal, "FILE_1")
+
+        result = results["normal"]
         st.markdown(f"<h3>Clasificación: {result}</h3>", unsafe_allow_html=True)
 
-        fig = px.line(df, x='Time', y='Value', color='Channel')
-        fig.update_layout(template='simple_white',
-                        legend_title='Señales',
-                        xaxis_title='Tiempo (m/s)',
-                        yaxis_title='Voltaje (A)',
-                        title='Señales',
-                        hovermode="x"
-                        )
+        fig = px.line(df, x="Time", y="Value", color="Channel")
+        fig.update_layout(
+            template="simple_white",
+            legend_title="Señales",
+            xaxis_title="Tiempo (m/s)",
+            yaxis_title="Voltaje (A)",
+            title="Señales",
+            hovermode="x",
+        )
         st.plotly_chart(fig)
 
         st.markdown("<h3>Estadísticos</h3>", unsafe_allow_html=True)
 
-        st.write(df.groupby('Channel').Value.describe())
+        st.write(df.groupby("Channel").Value.describe())
     else:
         st.error("\n".join(input_errors))
 else:
