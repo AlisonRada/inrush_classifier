@@ -1,6 +1,8 @@
+import io
+import time
+
 import streamlit as st
 import plotly.express as px
-import time
 import pandas as pd
 from comtrade import Comtrade
 
@@ -45,17 +47,10 @@ if len(uploaded_files) == 2:
     cfg_file = [file for file in uploaded_files if '.CFG' in file.name or '.cfg' in file.name][0]
     dat_file = [file for file in uploaded_files if '.DAT' in file.name or '.dat' in file.name][0]
 
-    cfg_content = cfg_file.read().decode('UTF-8')
-    dat_content = dat_file.read().decode('UTF-8')
-
-    with open(cfg_file.name, 'w', encoding='UTF-8') as f:
-        for line in cfg_content.split('\n'):
-            f.write(line)
-    with open(dat_file.name, 'w', encoding='UTF-8') as f:
-        for line in dat_content.split('\n'):
-            f.write(line)
+    cfg_content = io.TextIOWrapper(cfg_file)
+    dat_content = io.TextIOWrapper(dat_file)
     
-    comtrade_reader.load(cfg_file.name, dat_file.name)
+    comtrade_reader.read(cfg_content, dat_content)
 
     df = clean_entry(comtrade_reader, first_signal, 'FILE_1')
             
