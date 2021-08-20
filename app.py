@@ -6,10 +6,11 @@ import plotly.express as px
 from comtrade import Comtrade
 
 from cleaner import clean_entry
+from classify import inrush_classifier
 
 ICON_URL = "energy.png"
 title = "Detección de Inrush"
-results = {"error": "🔴", "normal": "🟢"}
+results = {"No inrush": "🔴", "Inrush": "🟢"}
 
 st.set_page_config(
     page_title=title,
@@ -60,7 +61,7 @@ if len(uploaded_files) == 2:
 
         df = clean_entry(comtrade_reader, first_signal, "FILE_1")
 
-        result = results["normal"]
+        result = results[inrush_classifier(df)]
         st.markdown(f"<h3>Clasificación: {result}</h3>", unsafe_allow_html=True)
 
         fig = px.line(df, x="Time", y="Value", color="Channel")
