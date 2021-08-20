@@ -3,3 +3,6 @@ streamlit
 comtrade
 plotly
 black
+scipy
+joblib
+scikit-learn

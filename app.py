@@ -56,7 +56,7 @@ if len(uploaded_files) == 2:
         classification = inrush_classifier(df)
         result = C.RESULTS[classification]
         st.markdown(
-            f"<h3>Clasificación: {result} {classification}</h3>", unsafe_allow_html=True
+            f"<h3>Clasificación: {result}</h3>", unsafe_allow_html=True
         )
 
         fig = px.line(df, x=C.TIME, y=C.VALUE, color=C.CHANNEL)

@@ -1,6 +1,6 @@
 # app icons
 ICON_URL = "energy.png"
-RESULTS = {"Inrush": "🔴", "No inrush": "🟢"}
+RESULTS = {"No": "No inrush", "Si":"Inrush"}
 
 # app titles and messages
 TITLE = "Detección de Inrush"
