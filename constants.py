@@ -14,8 +14,8 @@ DAT_ERROR = "Debes seleccionar un archivo DAT"
 
 # plots
 PLOT_TITLE = "Señales"
-X_AXIS_TITLE = "Tiempo (m/s)"
-Y_AXIS_TITLE = "Voltaje (A)"
+X_AXIS_TITLE = "Tiempo (ms)"
+Y_AXIS_TITLE = "Corriente (A)"
 
 # df keys
 CHANNEL = "Channel"

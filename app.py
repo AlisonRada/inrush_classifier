@@ -19,15 +19,17 @@ f"""
 ### **Nota**: Los archivos deben tener encoding UTF-8 para que el clasificador pueda dar resultados.
 """
 
-with st.sidebar.subheader("Subir archivos"):
+with st.sidebar.container():  
+    st.subheader("Subir archivos")
     uploaded_files = st.sidebar.file_uploader(
         C.FILE_UPLOADER_TITLE,
         type=[C.CFG, C.DAT],
         accept_multiple_files=True,
     )
 
-st.sidebar.subheader(C.SIGNALS_PICKER_HEADER)
-first_signal = st.sidebar.number_input("Señal A", min_value=1, value=1, step=1)
+with st.sidebar.container():
+    st.subheader(C.SIGNALS_PICKER_HEADER)
+    first_signal = st.sidebar.number_input("Señal A", min_value=1, value=1, step=1)
 
 if len(uploaded_files) == 2:
     comtrade_reader = Comtrade()
@@ -83,3 +85,40 @@ else:
 # this button is not connected to any other logic, it just causes a plain
 # rerun.
 st.button("Re-run")
+
+hide_footer_style = """
+<style>
+.reportview-container .main footer {visibility: hidden;}    
+"""
+st.markdown(hide_footer_style, unsafe_allow_html=True)
+
+footer="""<style>
+a:link , a:visited{
+color: blue;
+background-color: transparent;
+text-decoration: underline;
+}
+
+a:hover,  a:active {
+color: red;
+background-color: transparent;
+text-decoration: underline;
+}
+
+.footer {
+position: fixed;
+left: 0;
+bottom: 0;
+width: 100%;
+background-color: white;
+color: black;
+text-align: center;
+}
+
+</style>
+<div class="footer">
+    <p>Developed with ❤ by Team 59<br><img src="https://comtrade-files.s3.us-east-2.amazonaws.com/correlation-one.png" width=120></p>
+    
+</div>
+"""
+st.markdown(footer,unsafe_allow_html=True)
